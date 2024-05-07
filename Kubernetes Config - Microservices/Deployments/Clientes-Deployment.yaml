@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clientes
+  labels:
+    app: clientes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clientes
+  template:
+    metadata:
+      labels: 
+        app: clientes
+    spec:
+      containers:
+      - name: clientes
+        image: "docker.io/valenfernandez/clientes:1.0.0"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        ports:
+          - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        env:
+        - name: PORT 
+          value: "8000"
+        - name: MONGO_DB_URL
+          value: mongodb+srv://vale:05034250@sandbox.omh9a.mongodb.net/Clients
+        - name: BOOKS_MICROSERVICE_URL
+          value: http://books.default.svc.cluster.local:8000
+        - name: JWT_SECRET
+          value: secret
+
+

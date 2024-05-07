@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-backend
+  annotations:
+    kubernetes.io/ingress.class: "nginx"  #Hay que instalar nginx en el cluster
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /clientes(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: clientes
+            port:
+              number: 8000
+      - path: /books(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: books
+            port:
+              number: 8000

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: books
+  labels:
+    app: books
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: books
+  template:
+    metadata:
+      labels: 
+        app: books
+    spec:
+      containers:
+      - name: books
+        image: "docker.io/valenfernandez/books:1.0.0"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        ports:
+          - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        env:
+        - name: PORT 
+          value: "8000"
+        - name: MONGO_DB_URL
+          value: mongodb+srv://vale:05034250@sandbox.omh9a.mongodb.net/books_library
+        - name: JWT_SECRET
+          value: secret
+
+
